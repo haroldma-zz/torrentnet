@@ -1,0 +1,6 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <StartArguments>FarCry.torrent</StartArguments>
+    <StartWorkingDirectory>C:\Documents and Settings\games\My Documents\Project\torrent\tlist\</StartWorkingDirectory>
+  </PropertyGroup>
+</Project>
