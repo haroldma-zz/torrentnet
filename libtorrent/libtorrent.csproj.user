@@ -4,5 +4,7 @@
     <StartProgram>C:\Program Files\NUnit-Net-2.0 2.2.4\bin\nunit-gui.exe</StartProgram>
     <StartArguments>libtorrent.dll</StartArguments>
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+    <StartWorkingDirectory>
+    </StartWorkingDirectory>
   </PropertyGroup>
 </Project>

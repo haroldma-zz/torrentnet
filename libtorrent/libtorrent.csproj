@@ -39,6 +39,7 @@
     <Compile Include="BencodingTest.cs" />
     <Compile Include="BenDecoder.cs" />
     <Compile Include="ByteString.cs" />
+    <Compile Include="ClientSocket.cs" />
     <Compile Include="Hash.cs" />
     <Compile Include="IConnection.cs" />
     <Compile Include="ITorrentFile.cs" />
@@ -47,6 +48,7 @@
     <Compile Include="SingleFileTorrentTests.cs" />
     <Compile Include="Torrent.cs" />
     <Compile Include="TorrentTestUtils.cs" />
+    <Compile Include="ClientSocketTests.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
