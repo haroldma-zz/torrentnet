@@ -36,9 +36,10 @@ namespace TrackerProbe
             this.statusBar = new System.Windows.Forms.StatusStrip();
             this.connectionStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.splitter = new System.Windows.Forms.SplitContainer();
+            this.send = new System.Windows.Forms.Button();
             this.request = new System.Windows.Forms.TextBox();
             this.response = new System.Windows.Forms.TextBox();
-            this.send = new System.Windows.Forms.Button();
+            this.generateRequest = new System.Windows.Forms.Button();
             this.mainMenu.SuspendLayout();
             this.statusBar.SuspendLayout();
             this.splitter.Panel1.SuspendLayout();
@@ -115,6 +116,7 @@ namespace TrackerProbe
             // 
             // splitter.Panel1
             // 
+            this.splitter.Panel1.Controls.Add(this.generateRequest);
             this.splitter.Panel1.Controls.Add(this.send);
             this.splitter.Panel1.Controls.Add(this.request);
             // 
@@ -124,6 +126,17 @@ namespace TrackerProbe
             this.splitter.Size = new System.Drawing.Size(457, 366);
             this.splitter.SplitterDistance = 168;
             this.splitter.TabIndex = 5;
+            // 
+            // send
+            // 
+            this.send.Enabled = false;
+            this.send.Location = new System.Drawing.Point(379, 142);
+            this.send.Name = "send";
+            this.send.Size = new System.Drawing.Size(75, 23);
+            this.send.TabIndex = 1;
+            this.send.Text = "Send";
+            this.send.UseVisualStyleBackColor = true;
+            this.send.Click += new System.EventHandler(this.send_Click);
             // 
             // request
             // 
@@ -146,16 +159,15 @@ namespace TrackerProbe
             this.response.Size = new System.Drawing.Size(457, 194);
             this.response.TabIndex = 0;
             // 
-            // send
+            // generateRequest
             // 
-            this.send.Enabled = false;
-            this.send.Location = new System.Drawing.Point(379, 142);
-            this.send.Name = "send";
-            this.send.Size = new System.Drawing.Size(75, 23);
-            this.send.TabIndex = 1;
-            this.send.Text = "Send";
-            this.send.UseVisualStyleBackColor = true;
-            this.send.Click += new System.EventHandler(this.send_Click);
+            this.generateRequest.Location = new System.Drawing.Point(298, 141);
+            this.generateRequest.Name = "generateRequest";
+            this.generateRequest.Size = new System.Drawing.Size(75, 23);
+            this.generateRequest.TabIndex = 2;
+            this.generateRequest.Text = "Request";
+            this.generateRequest.UseVisualStyleBackColor = true;
+            this.generateRequest.Click += new System.EventHandler(this.generateRequest_Click);
             // 
             // TrackerProbe
             // 
@@ -196,6 +208,7 @@ namespace TrackerProbe
         private System.Windows.Forms.TextBox request;
         private System.Windows.Forms.TextBox response;
         private System.Windows.Forms.Button send;
+        private System.Windows.Forms.Button generateRequest;
     }
 }
 

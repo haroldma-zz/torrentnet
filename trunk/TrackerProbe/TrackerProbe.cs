@@ -1,7 +1,10 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
+using System.Web;
 using System.Windows.Forms;
 using torrent.libtorrent;
 
@@ -108,6 +111,23 @@ namespace TrackerProbe
                     callback(new string(Encoding.ASCII.GetChars(buffer)));
                     socket.EndReceive(ar);
                 }, null);
+        }
+
+        private void generateRequest_Click(object sender, EventArgs e)
+        {
+            Uri address = new Uri(trackerUrl.Text);
+            request.Text = string.Format("GET {0}?{1} HTTP/1.1", address.AbsolutePath, GenereateParameters());
+        }
+
+        private string GenereateParameters()
+        {
+            long bytes = 0;
+            foreach(ITorrentFile file in torrentFile.Files)
+            {
+                bytes += file.Length;
+            }
+            return string.Format("info_hash={0}&peer_id=12345678901234567890&port=6881&compact=1&uploaded=0&downloaded=0&left={1}&event=started", 
+                HttpUtility.UrlEncode(torrentFile.Hash.Value), bytes);
         }
     }
 }
