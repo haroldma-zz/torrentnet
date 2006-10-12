@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Security.Cryptography;
+using System.Web;
 
 namespace torrent.libtorrent
 {
@@ -25,6 +26,11 @@ namespace torrent.libtorrent
                 builder.AppendFormat("{0:X2}", value);
             }
             return builder.ToString();
+        }
+
+        public string ToUrlString()
+        {
+            return HttpUtility.UrlEncode(hash);
         }
     }
 }

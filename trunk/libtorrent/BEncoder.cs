@@ -73,6 +73,10 @@ namespace torrent.libtorrent
             {
                 Encode((long)element, buffer);
             }
+            else if(element is int)
+            {
+                Encode((int) element, buffer);
+            }
             else if (element is byte[])
             {
                 byte[] value = element as byte[];

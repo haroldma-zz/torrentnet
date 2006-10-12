@@ -19,7 +19,7 @@ namespace torrent.libtorrent
             ArrayList file2Path = new ArrayList(
                 new ByteString[] { new ByteString("dir1"), new ByteString("dir2"), new ByteString("file2") });
 
-            metainfo["announce"] = new ByteString("http://localhost:82");
+            metainfo["announce"] = new ByteString("http://localhost:82/announce");
             metainfo["info"] = info;
 
             info["name"] = new ByteString("test");
