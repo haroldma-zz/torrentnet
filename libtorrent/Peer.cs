@@ -1,0 +1,15 @@
+using System.Net;
+
+namespace torrent.libtorrent
+{
+    internal class Peer
+    {
+        public Peer(byte[] ip, short port)
+        {
+            IpAddress = new IPAddress(ip);
+            Port = IPAddress.NetworkToHostOrder(port);
+        }
+        public IPAddress IpAddress;
+        public short Port;
+    }
+}

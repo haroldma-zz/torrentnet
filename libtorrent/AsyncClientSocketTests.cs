@@ -8,16 +8,16 @@ using NUnit.Framework;
 namespace torrent.libtorrent
 {
     [TestFixture]
-    public class ClientSocketTests
+    public class AsyncClientSocketTests
     {
         private TestServer server;
-        private ClientSocket socket;
+        private AsyncClientSocket socket;
 
         [SetUp]
         public void SetUp()
         {
             server = new TestServer(4000);
-            socket = new ClientSocket("localhost", 4000);
+            socket = new AsyncClientSocket("localhost", 4000);
         }
 
         [TearDown]
@@ -101,7 +101,7 @@ namespace torrent.libtorrent
             Connect();
             bool received = false;
             string receivedMessage = null;
-            socket.MessageReceived += delegate(object sender, ClientSocket.ReceiveEventArgs e)
+            socket.MessageReceived += delegate(object sender, ReceiveEventArgs e)
                 {
                     received = true;
                     receivedMessage = e.Message.ToString();
