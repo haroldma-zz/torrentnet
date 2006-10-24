@@ -103,5 +103,21 @@ namespace torrent.libtorrent
             Assert.AreEqual(1, dictionary.Count);
             Assert.IsInstanceOfType(typeof(IDictionary), dictionary["dict"]);
         }
+        
+        [Test]
+        [ExpectedException(typeof(BenDecoderException))]
+        public void NonsenceInputThrowsException()
+        {
+            BenDecoder decoder = DecoderForString("Nonsence!");
+            decoder.ReadDictionary();
+        }
+    }
+
+    internal class BenDecoderException : Exception
+    {
+        public BenDecoderException(string message): base(message)
+        {
+           
+        }
     }
 }

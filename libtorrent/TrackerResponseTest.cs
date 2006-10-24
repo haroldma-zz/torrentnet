@@ -14,14 +14,7 @@ namespace torrent.libtorrent
         [Test]
         public void CompactResponse()
         {
-            Hashtable response = new Hashtable();
-            response["interval"] = 10;
-            response["tracker id"] = "some tracker id";
-            response["complete"] = 1;
-            response["incomplete"] = 2;
-            response["peers"] = new ByteString(new byte[] { 127, 0, 0, 1, 0x1a, 0xe1, 207, 142, 131, 248, 0x1a, 0xe2, 105, 100, 107, 120, 0x1a, 0xe3 });
-            ByteString responseBody = new ByteString(BEncoder.Encode(response));
-            TrackerResponse tr = new TrackerResponse(new ByteString(string.Format("HTTP/1.1 OK\r\n\r\n{0}", responseBody.ToString())));
+            TrackerResponse tr = new TrackerResponse(CreateTestResponseString());
             Assert.AreEqual(1, tr.NumberOfSeeds);
             Assert.AreEqual(2, tr.NumberOfLeechers);
         }
@@ -29,7 +22,6 @@ namespace torrent.libtorrent
         [Test]
         public void CompactResponseAddresses()
         {
-            ByteString responseBody = CreateTestResponseString();
             TrackerResponse tr = new TrackerResponse(CreateTestResponseString());
             Assert.AreEqual(IPAddress.Parse("127.0.0.1"), tr.Peers[0].IpAddress);
             Assert.AreEqual(6881, tr.Peers[0].Port);

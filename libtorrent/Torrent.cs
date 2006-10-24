@@ -39,14 +39,15 @@ namespace torrent.libtorrent
 
     class PieceList : List<byte[]>
     {
-        public PieceList(byte[] pieces)
+        public PieceList(ByteString pieces)
         {
-            for (int i = 0; i < pieces.Length / 20; i++)
+            byte[] peaceArray = pieces.ToBytes();
+            for (int i = 0; i < peaceArray.Length / 20; i++)
             {
                 byte[] piece = new byte[20];
                 for (int j = 0; j < piece.Length; j++)
                 {
-                    piece[j] = pieces[i * 20 + j];
+                    piece[j] = peaceArray[i * 20 + j];
                 }
                 base.Add(piece);
             }
@@ -96,7 +97,7 @@ namespace torrent.libtorrent
         {
             get
             { 
-                return new PieceList(info["pieces"] as byte[]); 
+                return new PieceList(info["pieces"] as ByteString); 
             }
         }
 

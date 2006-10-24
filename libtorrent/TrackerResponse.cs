@@ -5,7 +5,7 @@ using System.IO;
 
 namespace torrent.libtorrent
 {
-    internal class TrackerResponse
+    public class TrackerResponse
     {
         private IDictionary responseContent = new Hashtable();
         private List<Peer> peerList = new List<Peer>();

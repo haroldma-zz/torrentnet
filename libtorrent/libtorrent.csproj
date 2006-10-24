@@ -54,6 +54,7 @@
     <Compile Include="Torrent.cs" />
     <Compile Include="TorrentTestUtils.cs" />
     <Compile Include="AsyncClientSocketTests.cs" />
+    <Compile Include="Tracker.cs" />
     <Compile Include="TrackerResponse.cs" />
     <Compile Include="TrackerResponseTest.cs" />
     <Compile Include="TrackerTests.cs" />

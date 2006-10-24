@@ -2,7 +2,7 @@ using System.Net;
 
 namespace torrent.libtorrent
 {
-    internal class Peer
+    public class Peer
     {
         public Peer(byte[] ip, short port)
         {

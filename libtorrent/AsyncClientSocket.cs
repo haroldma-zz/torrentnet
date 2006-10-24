@@ -22,6 +22,11 @@ namespace torrent.libtorrent
             this.port = port;
         }
 
+        public AsyncClientSocket(Uri uri): this(uri.Host, uri.Port)
+        {
+            
+        }
+
         public void Connect()
         {
             socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -107,15 +112,22 @@ namespace torrent.libtorrent
             byte[] buffer = new byte[messageSize];
             socket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, delegate(IAsyncResult ar)
                 {
-                    int received = socket.EndReceive(ar);
-                    if(received == 0)
+                    try
                     {
-                        FireEvent(Disconnected);
-                        return;
+                        int received = socket.EndReceive(ar);
+                        if (received == 0)
+                        {
+                            FireEvent(Disconnected);
+                            return;
+                        }
+                        if (MessageReceived != null)
+                        {
+                            MessageReceived(this, new ReceiveEventArgs(new ByteString(buffer)));
+                        }
                     }
-                    if (MessageReceived != null)
+                    catch (SocketException se)
                     {
-                        MessageReceived(this, new ReceiveEventArgs(new ByteString(buffer)));
+                       OnSocketError(se);
                     }
                 }, null);
         }
