@@ -59,13 +59,13 @@ namespace torrent.libtorrent
             if (peek >= '0' && peek <= '9') return ReadString();
             if (peek == 'l') return ReadList();
             if (peek == 'd') return ReadDictionary();
-            throw new Exception("Parse Error");
+            throw new BenDecoderException("Wrong format of bencoded data");
         }
 
         public IDictionary ReadDictionary()
         {
             Hashtable dictionary = new Hashtable();
-            source.Read();
+            if (source.Read() != 'd') throw new BenDecoderException("Wrong format of bencoded data");
             while (source.PeekChar() != 'e')
             {
                 string key = ReadString().ToString();

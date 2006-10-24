@@ -27,6 +27,11 @@ namespace torrent.libtorrent
             }
         }
 
+        public override int GetHashCode()
+        {
+            return stringValue.GetHashCode();
+        }
+
         public ByteString(string value)
         {
             stringValue = value;

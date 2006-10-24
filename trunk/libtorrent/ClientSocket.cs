@@ -6,7 +6,7 @@ namespace torrent.libtorrent
     public delegate void ReceiveEventHandler(object sender, ReceiveEventArgs e);
     public delegate void SocketErrorHandler(object sender, SocketException se);
     
-    internal interface ClientSocket
+    public interface ClientSocket
     {
         event EventHandler ConnectionEstablished;
         event EventHandler MessageSent;

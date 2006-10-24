@@ -10,8 +10,16 @@ namespace torrent.libtorrent
         private Torrent file;
         private FakeSocket socket;
         private Tracker tracker;
-        
 
+        [SetUp]
+        public void SetUp()
+        {
+            socket = new FakeSocket();
+            file = TorrentTestUtils.CreateMultiFileTorrent();
+            socket.response = TrackerResponseTest.CreateTestResponseString();
+
+        }
+        
         [Test]
         public void SendStartedMessage()
         {
@@ -27,15 +35,6 @@ namespace torrent.libtorrent
             Assert.IsTrue(socket.Connected);
             Assert.IsTrue(connected);
             Assert.AreEqual(expectedMessage, socket.lastMessage);
-        }
-
-        [SetUp]
-        public void SetUp()
-        {
-            socket = new FakeSocket();
-            file = TorrentTestUtils.CreateMultiFileTorrent();
-            socket.response = TrackerResponseTest.CreateTestResponseString();
-            
         }
 
         [Test]
@@ -65,6 +64,16 @@ namespace torrent.libtorrent
             tracker.Start();
             Assert.IsTrue(errorReceived);
         }
+        
+        [Test]
+        public void ClosingTrackerClosesSocket()
+        {
+            tracker = new Tracker(file, socket);
+            tracker.Start();
+            Assert.IsTrue(socket.Connected);
+            tracker.Close();
+            Assert.IsFalse(socket.Connected);
+        }
     }
 
     internal class PeerId
@@ -75,83 +84,6 @@ namespace torrent.libtorrent
         }
     }
 
-    internal class Tracker
-    {
-        private Torrent file;
-        private ClientSocket socket;
-        private TrackerResponse lastResponse;
-        
-        public delegate void TrackerErrorHandler(object sender, Exception e);
-
-        public event EventHandler Connected;
-        public event EventHandler Updated;
-        public event TrackerErrorHandler Error;
-
-        public Tracker(Torrent file, ClientSocket socket)
-        {
-            this.file = file;
-            this.socket = socket;
-            this.socket.ConnectionEstablished += OnConnectionEstablished;
-            this.socket.MessageSent += OnMessageSent;
-            this.socket.MessageReceived += OnMessageReceived;
-            this.socket.SocketError += OnSocketError;
-        }
-
-        private void OnSocketError(object sender, SocketException se)
-        {
-            if(Error != null)
-            {
-                Error(this, se);
-            }
-        }
-
-        private void OnMessageReceived(object sender, ReceiveEventArgs e)
-        {
-            DecodeResponse(e.Message);
-            FireEvent(Updated);
-        }
-
-        private void FireEvent(EventHandler eventHandler)
-        {
-            if (eventHandler != null)
-            {
-                eventHandler(this, new EventArgs());
-            }
-        }
-
-        private void DecodeResponse(ByteString message)
-        {
-            lastResponse = new TrackerResponse(message);
-        }
-
-        private void OnMessageSent(object sender, EventArgs e)
-        {
-            ReceiveResponse();
-        }
-
-        private void ReceiveResponse()
-        {
-            socket.Receive(1024);
-        }
-
-        public TrackerResponse LastResponse
-        {
-            get { return lastResponse; }
-        }
-
-        private void OnConnectionEstablished(object sender, EventArgs e)
-        {
-            FireEvent(Connected);
-            socket.Send(string.Format("GET {0}?info_hash={1}&peer_id={2}&port=6881&" +
-                                      "compact=1&uploaded=0&downloaded=0&left=3706908089&event=started HTTP/1.1\r\n\r\n", file.AnnounceUri.AbsolutePath, file.Hash.ToUrlString(), PeerId.GetId()));
-        }
-
-        public void Start()
-        {
-            socket.Connect();
-        }
-    }
-    
     internal class FakeErrorSocket : ClientSocket
     {
         public event EventHandler ConnectionEstablished;
@@ -218,7 +150,8 @@ namespace torrent.libtorrent
 
         public void Close()
         {
-            throw new NotImplementedException();
+            Connected = false;
+            FireEvent(Disconnected);
         }
 
         public void Send(string message)

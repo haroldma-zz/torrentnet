@@ -24,7 +24,7 @@ namespace torrent.libtorrent
 
             info["name"] = new ByteString("test");
             info["piece length"] = 512 * 1024L;
-            info["pieces"] = new byte[40];
+            info["pieces"] = new ByteString(new byte[40]);
             info["files"] = files;
             files.Add(file1);
             files.Add(file2);
@@ -46,7 +46,7 @@ namespace torrent.libtorrent
             info["name"] = new ByteString("test");
             info["length"] = 512 * 1024L + 256 * 1024L;
             info["piece length"] = 512 * 1024L;
-            info["pieces"] = new byte[40];
+            info["pieces"] = new ByteString(new byte[40]);
             metainfo["info"] = info;
             return new Torrent(metainfo);
         }
