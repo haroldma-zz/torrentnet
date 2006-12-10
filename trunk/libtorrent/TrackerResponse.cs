@@ -8,7 +8,7 @@ namespace torrent.libtorrent
     public class TrackerResponse
     {
         private IDictionary responseContent = new Hashtable();
-        private List<Peer> peerList = new List<Peer>();
+        private List<PeerInfo> peerList = new List<PeerInfo>();
         public TrackerResponse(ByteString responseText)
         {
             HttpResponse response = new HttpResponse(responseText);
@@ -21,7 +21,7 @@ namespace torrent.libtorrent
                 BinaryReader reader = new BinaryReader(new MemoryStream(peers.ToBytes()));
                 for(int i = 0; i<peers.ToBytes().Length; i+=6)
                 {
-                    peerList.Add(new Peer(reader.ReadBytes(4), reader.ReadInt16()));
+                    peerList.Add(new PeerInfo(reader.ReadBytes(4), reader.ReadInt16()));
                 }
             }
         }
@@ -52,7 +52,7 @@ namespace torrent.libtorrent
             get { return Convert.ToInt32(responseContent["incomplete"]); }
         }
 
-        public List<Peer> Peers
+        public List<PeerInfo> Peers
         {
             get { return peerList; }
         }

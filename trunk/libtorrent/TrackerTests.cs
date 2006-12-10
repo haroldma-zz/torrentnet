@@ -1,9 +1,14 @@
 using System;
 using System.Net.Sockets;
 using NUnit.Framework;
+using torrent.libtorrent.TestMocks;
 
 namespace torrent.libtorrent
 {
+    namespace TestMocks
+    {
+    }
+
     [TestFixture]
     public class TrackerTests
     {
@@ -78,100 +83,33 @@ namespace torrent.libtorrent
 
     internal class PeerId
     {
-        public static string GetId()
+        public static PeerId GetIdForTest()
         {
-            return "12345678901234567890";
-        }
-    }
-
-    internal class FakeErrorSocket : ClientSocket
-    {
-        public event EventHandler ConnectionEstablished;
-        public event EventHandler MessageSent;
-        public event EventHandler Disconnected;
-        public event ReceiveEventHandler MessageReceived;
-        public event SocketErrorHandler SocketError;
-
-        public void Connect()
-        {
-            if(SocketError != null)
-            {
-                SocketError(this, new SocketException(4));
-            }
+            return new PeerId("12345678901234567890");
         }
 
-        public void Close()
+        private string id;
+        public PeerId(ByteString id):this(id.ToString())
         {
-            throw new NotImplementedException();
+            
         }
-
-        public void Send(string message)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Send(byte[] messageBuffer)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Receive(int messageSize)
-        {
-            throw new NotImplementedException();
+        public PeerId(string id)
+        { 
+            this.id = id;
         }
         
-    }
-
-    internal class FakeSocket : ClientSocket
-    {
-        public ByteString lastMessage;
-        public ByteString response;
-        public bool Connected = false;
-
-        public event EventHandler ConnectionEstablished;
-        public event EventHandler MessageSent;
-        public event EventHandler Disconnected;
-        public event ReceiveEventHandler MessageReceived;
-        public event SocketErrorHandler SocketError;
-
-        public void Connect()
+        public override string ToString()
         {
-            Connected = true;
-            FireEvent(ConnectionEstablished);
+            return id;
         }
-
-        private void FireEvent(EventHandler eventHandler)
+        
+        public override bool Equals(object o)
         {
-            if (eventHandler != null)
+            if(o is PeerId)
             {
-                eventHandler(this, new EventArgs());
+                return id.Equals((o as PeerId).id);
             }
-        }
-
-        public void Close()
-        {
-            Connected = false;
-            FireEvent(Disconnected);
-        }
-
-        public void Send(string message)
-        {
-            lastMessage = new ByteString(message);
-            FireEvent(MessageSent);
-        }
-
-        public void Send(byte[] messageBuffer)
-        {
-            lastMessage = new ByteString(messageBuffer);
-            FireEvent(MessageSent);
-        }
-
-        public void Receive(int messageSize)
-        {
-            if (MessageReceived != null)
-            {
-                MessageReceived(this, new ReceiveEventArgs(response));
-            }
+            return false;
         }
     }
 }

@@ -78,7 +78,7 @@ namespace TrackerProbe
         {
             peerList.BeginUpdate();
             peerList.Items.Clear();
-            foreach(Peer peer in tracker.LastResponse.Peers)
+            foreach(PeerInfo peer in tracker.LastResponse.Peers)
             {
                 ListViewItem peerEntry = new ListViewItem(peer.IpAddress.ToString());
                 peerEntry.SubItems.Add(((ushort)peer.Port).ToString());
@@ -92,7 +92,7 @@ namespace TrackerProbe
             trackerUrl.Text = torrent.AnnounceUri.ToString();
             numberOfPieces.Text = torrent.Pieces.Count.ToString();
             pieceLength.Text = torrent.PieceLength.ToString();
-            hash.Text = torrent.Hash.ToHexString();
+            hash.Text = torrent.InfoHash.ToHexString();
             peerList.Items.Clear();
         }
 

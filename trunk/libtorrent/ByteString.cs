@@ -8,10 +8,22 @@ namespace torrent.libtorrent
     {
         private byte[] bytes;
         private string stringValue;
+        
+        public ByteString(byte b): this(new byte[] {b})
+        {
+            
+        }
 
         public ByteString(byte[] bytes)
         {
             this.bytes = bytes;
+            stringValue = Encoding.Default.GetString(bytes);
+        }
+        
+        public ByteString(byte[] source, int start, int length)
+        {
+            bytes = new byte[length];
+            Array.Copy(source, start, bytes, 0, length);
             stringValue = Encoding.Default.GetString(bytes);
         }
 
@@ -43,6 +55,21 @@ namespace torrent.libtorrent
             return stringValue;
         }
 
+        public static ByteString operator + (ByteString first, ByteString second)
+        {
+            return new ByteString(string.Concat(first.ToString(), second.ToString()));    
+        }
+       
+        public static ByteString operator +(ByteString first, byte[] second)
+        {
+            return first + new ByteString(second);
+        }
+        
+        public static ByteString operator +(ByteString first, string second)
+        {
+            return first + new ByteString(second);
+        }
+        
         public byte[] ToBytes()
         {
             return bytes;

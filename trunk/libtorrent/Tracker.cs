@@ -83,7 +83,7 @@ namespace torrent.libtorrent
         {
             FireEvent(Connected);
             socket.Send(string.Format("GET {0}?info_hash={1}&peer_id={2}&port=6881&" +
-                                      "compact=1&uploaded=0&downloaded=0&left=3706908089&event=started HTTP/1.1\r\n\r\n", file.AnnounceUri.AbsolutePath, file.Hash.ToUrlString(), PeerId.GetId()));
+                                      "compact=1&uploaded=0&downloaded=0&left=3706908089&event=started HTTP/1.1\r\n\r\n", file.AnnounceUri.AbsolutePath, file.InfoHash.ToUrlString(), PeerId.GetIdForTest()));
         }
 
         public void Start()
