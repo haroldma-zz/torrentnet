@@ -16,7 +16,7 @@ namespace tlist
             Console.WriteLine("Tracker: {0}", torrent.AnnounceUri);
             Console.WriteLine("Number of pieces: {0}", torrent.Pieces.Count);
             Console.WriteLine("Piece length: {0}", torrent.PieceLength);
-            Console.WriteLine("Hash: {0}", torrent.Hash.ToHexString());
+            Console.WriteLine("Hash: {0}", torrent.InfoHash.ToHexString());
             Console.WriteLine("Files:");
             foreach (ITorrentFile file in torrent.Files)
             {

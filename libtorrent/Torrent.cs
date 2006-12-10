@@ -106,9 +106,12 @@ namespace torrent.libtorrent
             get { return files; }
         }
 
-        public Hash Hash
+        public Hash InfoHash
         {
-            get { return new Hash(BEncoder.Encode(info)); }
+            get
+            {
+                return Hash.Compute(BEncoder.Encode(info));
+            }
         }
     }
 }

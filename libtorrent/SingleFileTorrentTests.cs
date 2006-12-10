@@ -65,10 +65,10 @@ namespace torrent.libtorrent
         [Test]
         public void Hash()
         {
-            Assert.AreEqual(20, torrent.Hash.Value.Length);
-            Assert.AreEqual(40, torrent.Hash.ToHexString().Length);
+            Assert.AreEqual(20, torrent.InfoHash.Value.Length);
+            Assert.AreEqual(40, torrent.InfoHash.ToHexString().Length);
             Assert.AreEqual("2511167C5282E94B646E0A450B5502D6007BC65F",
-                torrent.Hash.ToHexString());
+                torrent.InfoHash.ToHexString());
         }
     }
 }
