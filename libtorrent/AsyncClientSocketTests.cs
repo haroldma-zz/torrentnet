@@ -43,6 +43,20 @@ namespace torrent.libtorrent
         }
 
         [Test]
+        public void MakeConnectionWithoutEvents()
+        {
+            server.Start();
+            bool connected = false;
+            socket.Connect(delegate
+                {
+                    connected = true;
+                });
+            Wait();
+            Assert.IsTrue(connected);
+            Assert.AreEqual(1, server.numberOfConnections);
+        }
+
+        [Test]
         public void TryConnectToABrokenServer()
         {
             bool errorDetected = false;
@@ -65,6 +79,20 @@ namespace torrent.libtorrent
                     sent = true;
                 };
             socket.Send("Hello world\n\r");
+            Wait();
+            Assert.IsTrue(sent);
+            Assert.AreEqual("Hello world", server.Receive());
+        }
+
+        [Test]
+        public void SendMessageWithoutEvents()
+        {
+            Connect();
+            bool sent = false;
+            socket.Send(new ByteString("Hello world\n\r").ToBytes(), delegate
+                {
+                    sent = true;
+                });
             Wait();
             Assert.IsTrue(sent);
             Assert.AreEqual("Hello world", server.Receive());
@@ -107,6 +135,24 @@ namespace torrent.libtorrent
                     receivedMessage = e.Message.ToString();
                 };
             socket.Receive(11);
+            server.Send("Hello world");
+            Wait();
+            Assert.IsTrue(received);
+            Assert.AreEqual("Hello world", receivedMessage);
+        }
+
+        [Test]
+        public void ReceiveWithoutEvents()
+        {
+            Connect();
+            bool received = false;
+            string receivedMessage = null;
+            
+            socket.Receive(11, delegate(ReceiveEventArgs e)
+                {
+                    received = true;
+                    receivedMessage = e.Message.ToString();
+                });
             server.Send("Hello world");
             Wait();
             Assert.IsTrue(received);

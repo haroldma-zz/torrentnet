@@ -1,9 +1,20 @@
 using System;
+using System.Net.Sockets;
 
 namespace torrent.libtorrent
 {
     internal delegate void HandshakeEventHandler(object sender, HandshakeMessage message);
-    
+
+    internal class PeerEventArgs : EventArgs
+    {
+        public Exception Exception;
+
+        public PeerEventArgs(Exception exception)
+        {
+            Exception = exception;
+        }
+    }
+
     internal class Peer
     {
         private ClientSocket socket;
@@ -11,6 +22,7 @@ namespace torrent.libtorrent
         private PeerId myPeerId;
 
         public event EventHandler Connected;
+        public EventHandler<PeerEventArgs> Error;
         public event HandshakeEventHandler HandshakeReceived;
 
         public Peer(ClientSocket socket, Torrent torrent, PeerId myId)
@@ -18,6 +30,12 @@ namespace torrent.libtorrent
             this.socket = socket;
             this.torrent = torrent;
             myPeerId = myId;
+            this.socket.SocketError += new SocketErrorHandler(OnSocketError);
+        }
+
+        private void OnSocketError(object sender, SocketException se)
+        {
+            FireEvent(Error, new PeerEventArgs(se));
         }
 
         public Peer(ClientSocket socket, PeerId myId)
@@ -33,13 +51,18 @@ namespace torrent.libtorrent
 
         public void Connect()
         {
-            socket.ConnectionEstablished += delegate
-                {
-                    FireEvent(Connected, new EventArgs());
-                    SendHandshake();
-                    ReceiveHandshake();
-                };
-            socket.Connect();
+            socket.Connect(delegate
+            {
+                FireEvent(Connected, new EventArgs());
+                HandshakeMessage message = new HandshakeMessage(torrent.InfoHash, myPeerId);
+                socket.Send(message.ToBytes(), delegate
+                    {
+                        socket.Receive(68, delegate(ReceiveEventArgs e)
+                        {
+                            FireEvent(HandshakeReceived, new HandshakeMessage(e.Message.ToBytes()));
+                        });
+                    });
+            });
         }
 
         private void SendHandshake()

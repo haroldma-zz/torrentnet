@@ -11,11 +11,28 @@ namespace torrent.libtorrent.TestMocks
         public event ReceiveEventHandler MessageReceived;
         public event SocketErrorHandler SocketError;
 
+
+        public bool ErrorOnConnect, ErrorOnSend;
+        
         public void Connect()
         {
-            if(SocketError != null)
+            GenerateError(ErrorOnConnect, ConnectionEstablished, new EventArgs());
+        }
+
+        public void Connect(SocketCallback nextAction)
+        {
+            GenerateError(ErrorOnConnect, ConnectionEstablished, new EventArgs());
+        }
+
+        private void GenerateError(bool createError, Delegate handler, object args)
+        {
+            if(createError && SocketError != null)
             {
                 SocketError(this, new SocketException(4));
+            }
+            else if(!createError && handler != null)
+            {
+                handler.DynamicInvoke(this, args);
             }
         }
 
@@ -26,10 +43,15 @@ namespace torrent.libtorrent.TestMocks
 
         public void Send(string message)
         {
-            throw new NotImplementedException();
+            GenerateError(ErrorOnSend, MessageSent, new EventArgs());
         }
 
         public void Send(byte[] messageBuffer)
+        {
+            GenerateError(ErrorOnSend, MessageSent, new EventArgs());
+        }
+
+        public void Send(byte[] mesageBuffer, SocketCallback nextAction)
         {
             throw new NotImplementedException();
         }
@@ -38,6 +60,10 @@ namespace torrent.libtorrent.TestMocks
         {
             throw new NotImplementedException();
         }
-        
+
+        public void Receive(int messageSize, ReceiveCallback nextAction)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
