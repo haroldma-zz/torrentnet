@@ -2,7 +2,7 @@ using System;
 
 namespace torrent.libtorrent
 {
-    class HandshakeMessage
+    public class HandshakeMessage
     {
         private Hash infoHash;
         private PeerId peerId;

@@ -3,29 +3,35 @@ using System.Net.Sockets;
 
 namespace torrent.libtorrent
 {
-    internal delegate void HandshakeEventHandler(object sender, HandshakeMessage message);
-
-    internal class PeerEventArgs : EventArgs
+    public class PeerEventArgs : EventArgs
     {
         public Exception Exception;
+        public HandshakeMessage Handshake;
 
-        public PeerEventArgs(Exception exception)
+        public PeerEventArgs(HandshakeMessage message, Exception exception)
         {
             Exception = exception;
+            Handshake = message;
         }
     }
 
-    internal class Peer
+    public class Peer
     {
         private ClientSocket socket;
         private Torrent torrent;
         private PeerId myPeerId;
+        private PeerInfo info;
 
         public event EventHandler Connected;
-        public EventHandler<PeerEventArgs> Error;
-        public event HandshakeEventHandler HandshakeReceived;
+        public event EventHandler<PeerEventArgs> Error;
+        public event EventHandler<PeerEventArgs> HandshakeReceived;
+        
+        public Peer(PeerInfo remotePeerData, Torrent torrent, PeerId myId) : this(new AsyncClientSocket(remotePeerData.IpAddress.ToString(), remotePeerData.Port), torrent, myId)
+        {
+            info = remotePeerData;
+        }
 
-        public Peer(ClientSocket socket, Torrent torrent, PeerId myId)
+        internal Peer(ClientSocket socket, Torrent torrent, PeerId myId)
         {
             this.socket = socket;
             this.torrent = torrent;
@@ -35,10 +41,10 @@ namespace torrent.libtorrent
 
         private void OnSocketError(object sender, SocketException se)
         {
-            FireEvent(Error, new PeerEventArgs(se));
+            FireEvent(Error, new PeerEventArgs(null, se));
         }
 
-        public Peer(ClientSocket socket, PeerId myId)
+        internal Peer(ClientSocket socket, PeerId myId)
         {
             this.socket = socket;
             myPeerId = myId;
@@ -47,6 +53,11 @@ namespace torrent.libtorrent
         public Torrent Torrent
         {
             set { torrent = value; }
+        }
+
+        public PeerInfo Info
+        {
+            get { return info; }
         }
 
         public void Connect()
@@ -59,7 +70,7 @@ namespace torrent.libtorrent
                     {
                         socket.Receive(68, delegate(ReceiveEventArgs e)
                         {
-                            FireEvent(HandshakeReceived, new HandshakeMessage(e.Message.ToBytes()));
+                            FireEvent(HandshakeReceived, new PeerEventArgs(new HandshakeMessage(e.Message.ToBytes()), null));
                         });
                     });
             });
@@ -89,7 +100,7 @@ namespace torrent.libtorrent
         {
             socket.MessageReceived += delegate(object sender, ReceiveEventArgs e)
                 {
-                    FireEvent(HandshakeReceived, new HandshakeMessage(e.Message.ToBytes()));
+                    FireEvent(HandshakeReceived, new PeerEventArgs(new HandshakeMessage(e.Message.ToBytes()), null));
                 };
             socket.Receive(68);
         }

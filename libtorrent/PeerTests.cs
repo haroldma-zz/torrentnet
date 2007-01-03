@@ -57,12 +57,12 @@ namespace torrent.libtorrent
         {
             socket.Connected = true;
             peer = new Peer(socket, PeerId.GetIdForTest());
-            peer.HandshakeReceived += delegate(object sender, HandshakeMessage message)
+            peer.HandshakeReceived += delegate(object sender, PeerEventArgs args)
                 {
                     peer.Torrent = torrent;
                     Assert.AreSame(peer, sender);
-                    Assert.AreEqual(torrent.InfoHash, message.InfoHash);
-                    Assert.AreEqual(PeerId.GetIdForTest(), message.PeerId);
+                    Assert.AreEqual(torrent.InfoHash, args.Handshake.InfoHash);
+                    Assert.AreEqual(PeerId.GetIdForTest(), args.Handshake.PeerId);
                 };
             peer.AcceptHandshake();
             Assert.AreEqual(HandshakeMessageTests.GetTestHandshake(), socket.lastMessage);
