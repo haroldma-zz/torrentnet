@@ -26,8 +26,8 @@ namespace torrent.libtorrent
         {
             
         }
-
-        public void Connect()
+        
+        private void Connect(Delegate callBack, params object[] args)
         {
             socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             socket.BeginConnect(host, port, delegate(IAsyncResult ar)
@@ -35,28 +35,30 @@ namespace torrent.libtorrent
                     try
                     {
                         socket.EndConnect(ar);
-                        FireEvent(ConnectionEstablished);
+                        FireEvent(callBack, args);
                     }
                     catch (SocketException se)
                     {
-                        OnSocketError(se);
+                        FireEvent(SocketError, this, se);
                     }
                 }, null);
         }
 
-        private void OnSocketError(SocketException se)
+        public void Connect()
         {
-            if(SocketError != null)
-            {
-                SocketError(this, se);
-            }
+            Connect(ConnectionEstablished, this, new EventArgs());
         }
 
-        private void FireEvent(EventHandler eventHandler)
+        public void Connect(SocketCallback nextAction)
+        {
+            Connect(nextAction as Delegate);
+        }
+
+        private void FireEvent(Delegate eventHandler, params object[] args)
         {
             if (eventHandler != null)
             {
-                eventHandler(this, new EventArgs());
+                eventHandler.DynamicInvoke(args);
             }
         }
 
@@ -73,6 +75,16 @@ namespace torrent.libtorrent
 
         public void Send(byte[] messageBuffer)
         {
+            Send(messageBuffer, MessageSent, this, new EventArgs());
+        }
+
+        public void Send(byte[] messageBuffer, SocketCallback nextAction)
+        {
+            Send(messageBuffer, nextAction as Delegate);
+        }
+
+        private void Send(byte[] messageBuffer, Delegate eventHandler, params object[] args)
+        {
             int offset = 0;
             int length = messageBuffer.Length;
             AsyncCallback callback = null;
@@ -83,7 +95,7 @@ namespace torrent.libtorrent
                     length -= sent;
                     if (length == 0)
                     {
-                        FireEvent(MessageSent);
+                        FireEvent(eventHandler, args);
                     }
                     else
                     {
@@ -93,7 +105,7 @@ namespace torrent.libtorrent
                         }
                         catch (SocketException se)
                         {
-                            OnSocketError(se);
+                            FireEvent(SocketError, this, se);
                         }
                     }
                 };
@@ -103,7 +115,7 @@ namespace torrent.libtorrent
             }
             catch (SocketException se)
             {
-                OnSocketError(se);
+                FireEvent(SocketError, this, se);
             }
         }
 
@@ -117,7 +129,7 @@ namespace torrent.libtorrent
                         int received = socket.EndReceive(ar);
                         if (received == 0)
                         {
-                            FireEvent(Disconnected);
+                            FireEvent(Disconnected, this, new EventArgs());
                             return;
                         }
                         if (MessageReceived != null)
@@ -127,7 +139,29 @@ namespace torrent.libtorrent
                     }
                     catch (SocketException se)
                     {
-                       OnSocketError(se);
+                        FireEvent(SocketError, this, se);
+                    }
+                }, null);
+        }
+
+        public void Receive(int messageSize, ReceiveCallback nextAction)
+        {
+            byte[] buffer = new byte[messageSize];
+            socket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, delegate(IAsyncResult ar)
+                {
+                    try
+                    {
+                        int received = socket.EndReceive(ar);
+                        if (received == 0)
+                        {
+                            FireEvent(Disconnected, this, new EventArgs());
+                            return;
+                        }
+                        FireEvent(nextAction, new ReceiveEventArgs(new ByteString(buffer)));
+                    }
+                    catch (SocketException se)
+                    {
+                        FireEvent(SocketError, this, se);
                     }
                 }, null);
         }

@@ -17,7 +17,7 @@ namespace torrent.libtorrent
         }
 
         [Test]
-        public void ParseWholeHandshackeMessage()
+        public void ParseWholeHandshakeMessage()
         {
             HandshakeMessage message = new HandshakeMessage(GetHandshake(19, "BitTorrent protocol").ToBytes());
             Assert.AreEqual(TorrentTestUtils.CreateMultiFileTorrent().InfoHash, message.InfoHash);

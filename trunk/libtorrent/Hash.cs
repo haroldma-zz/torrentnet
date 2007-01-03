@@ -44,9 +44,9 @@ namespace torrent.libtorrent
             if(other is Hash)
             {
                 Hash o = other as Hash;
-                for(int i = 0; i<hash.Length; i++)
+                for (int i = 0; i < hash.Length; i++)
                 {
-                    if(hash[i] != o.hash[i])
+                    if (hash[i] != o.hash[i])
                     {
                         return false;
                     }

@@ -59,7 +59,9 @@ namespace torrent.libtorrent
         [Test]
         public void HandleError()
         {
-            tracker = new Tracker(file, new FakeErrorSocket());
+            FakeErrorSocket fakeSocket = new FakeErrorSocket();
+            fakeSocket.ErrorOnConnect = true;
+            tracker = new Tracker(file, fakeSocket);
             bool errorReceived = false;
             tracker.Error += delegate(object sender, Exception se)
                 {
@@ -110,6 +112,11 @@ namespace torrent.libtorrent
                 return id.Equals((o as PeerId).id);
             }
             return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return id.GetHashCode();
         }
     }
 }

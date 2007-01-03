@@ -21,6 +21,12 @@ namespace torrent.libtorrent.TestMocks
             FireEvent(ConnectionEstablished);
         }
 
+        public void Connect(SocketCallback nextAction)
+        {
+            Connected = true;
+            nextAction.Invoke();
+        }
+
         private void FireEvent(EventHandler eventHandler)
         {
             if (eventHandler != null)
@@ -49,6 +55,13 @@ namespace torrent.libtorrent.TestMocks
             FireEvent(MessageSent);
         }
 
+        public void Send(byte[] messageBuffer, SocketCallback nextAction)
+        {
+            Assert.IsTrue(Connected, "Socket was not connected");
+            lastMessage = new ByteString(messageBuffer);
+            nextAction.Invoke();
+        }
+
         public void Receive(int messageSize)
         {
             Assert.IsTrue(Connected, "Socket was not connected");
@@ -56,6 +69,12 @@ namespace torrent.libtorrent.TestMocks
             {
                 MessageReceived(this, new ReceiveEventArgs(response));
             }
+        }
+
+        public void Receive(int messageSize, ReceiveCallback nextAction)
+        {
+            Assert.IsTrue(Connected, "Socket was not connected");
+            nextAction.Invoke(new ReceiveEventArgs(response));
         }
     }
 }
