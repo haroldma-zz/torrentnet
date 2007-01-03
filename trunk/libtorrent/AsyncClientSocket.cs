@@ -22,6 +22,12 @@ namespace torrent.libtorrent
             this.port = port;
         }
 
+        public AsyncClientSocket(string host, short port)
+        {
+            this.host = host;
+            this.port = (ushort)port;
+        }
+
         public AsyncClientSocket(Uri uri): this(uri.Host, uri.Port)
         {
             

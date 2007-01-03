@@ -83,11 +83,16 @@ namespace torrent.libtorrent
         }
     }
 
-    internal class PeerId
+    public class PeerId
     {
-        public static PeerId GetIdForTest()
+        internal static PeerId GetIdForTest()
         {
             return new PeerId("12345678901234567890");
+        }
+        
+        public static PeerId GetDefaultPeerId()
+        {
+            return GetIdForTest();
         }
 
         private string id;
