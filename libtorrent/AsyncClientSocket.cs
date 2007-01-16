@@ -33,6 +33,11 @@ namespace torrent.libtorrent
             
         }
         
+        public AsyncClientSocket(Socket socket)
+        {
+            this.socket = socket;
+        }
+        
         private void Connect(Delegate callBack, params object[] args)
         {
             socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
