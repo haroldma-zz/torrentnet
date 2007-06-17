@@ -43,6 +43,7 @@
     <Compile Include="BencodingTest.cs" />
     <Compile Include="BenDecoder.cs" />
     <Compile Include="ByteString.cs" />
+    <Compile Include="Connection.cs" />
     <Compile Include="Hash.cs" />
     <Compile Include="HttpResponse.cs" />
     <Compile Include="HttpResponseTest.cs" />
@@ -51,6 +52,8 @@
     <Compile Include="PeerInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SingleFileTorrentTests.cs" />
+    <Compile Include="TcpConnection.cs" />
+    <Compile Include="TcpConnectionTest.cs" />
     <Compile Include="Torrent.cs" />
     <Compile Include="TorrentTestUtils.cs" />
     <Compile Include="TrackerResponse.cs" />
